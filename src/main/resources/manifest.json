@@ -1,0 +1,20 @@
+{
+    "Group": "ca.nicecube",
+    "Name": "FixBadMod",
+    "Version": "0.1.0",
+    "Description": "Scans saved chunks and replaces bad mod blocks with safe replacements.",
+    "Authors": [
+        {
+            "Name": "nicecube",
+            "Email": "contact@nicecube.ca",
+            "Url": "https://nicecube.ca"
+        }
+    ],
+    "Website": "https://nicecube.ca",
+    "DisabledByDefault": false,
+    "IncludesAssetPack": false,
+    "Dependencies": {},
+    "OptionalDependencies": {},
+    "ServerVersion": "*",
+    "Main": "ca.nicecube.fixbadmod.FixBadModPlugin"
+}
