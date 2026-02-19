@@ -1,6 +1,10 @@
 /**
  * NOTE: This is entirely optional and basics can be done in `settings.gradle.kts`
  */
+import org.gradle.jvm.tasks.Jar
+
+group = "ca.nicecube"
+version = "1.0.2"
 
 val hytaleServerJarPath = providers.gradleProperty("hytale.server.jar")
     .orElse("../../HytaleServer.jar")
@@ -27,4 +31,8 @@ repositories {
 dependencies {
     // Local Hytale server API jar (override with -Phytale.server.jar=...).
     compileOnly(files(hytaleServerJar))
+}
+
+tasks.named<Jar>("jar") {
+    archiveFileName.set("FixBadMod-${project.version}.jar")
 }

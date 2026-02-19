@@ -1,0 +1,744 @@
+﻿{
+    "enable":  false,
+    "description":  "Cleanup template for NoCube Tavern content. Disabled by default.",
+    "rules":  [
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Aged_Wine_Buff",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Aging_Cask",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Ale",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Ale_Buff",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Apple_Cider",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Apple_Cider_Buff",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Beer",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Beer_Bubble",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Beer_Bubbles",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Beer_Buff",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Bench_Aging_Cask",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Bench_Brewing_Cauldron",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Bench_Keg",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Boiling_Bubbles",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Brewing_Cauldron",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Brewing_Cauldron2",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Brewing_Yeast",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Brewing_Yeasts",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Bubbles_Beer",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Bubbles_Boiling",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Bubbles_Dark",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Bubbles_Wine",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Chicha",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Chicha_Buff",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Counter_Stool",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Dark_Bubble",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Dark_Bubbles",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Deco_Glass_Jug",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Deco_Glass_Jug_Crated",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Deco_Mug_Pile",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Drink_Aged_Wine",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Drink_Ale",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Drink_Apple_Cider",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Drink_Beer",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Drink_Chicha",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Drink_Kvass",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Drink_Pale_Ale",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Drink_Peasant_Beer",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Drink_Rough_Wine",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Drink_Sake",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Drink_Stout",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Drink_TierCheck_T1",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Drink_TierCheck_T2",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Drink_TierCheck_T3",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Drink_Wine",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Drops_Hops",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Drops_Hops_Harvest",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Drops_Hops_Trellis",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Drunk",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Furniture_Counter_Stool",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Furniture_Tavern_Counter",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Furniture_Tavern_Window_Blue",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Furniture_Tavern_Window_Glass",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Furniture_Tavern_Window_Green",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Furniture_Tavern_Window_Lit",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Furniture_Tavern_Window_Red",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Glass_Jug",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Glass_Jug_Crated",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Hops",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Hops_Plant",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Hops_Plant_Ripe",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Hops_Plant_Trellis",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Ingredient_Brewing_Yeast",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Ingredient_Roasted_Malt",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Ingredient_Wort",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Ingredient_Wort_Ale",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Ingredient_Wort_Apple_Cider",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Ingredient_Wort_Beer",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Ingredient_Wort_Chicha",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Ingredient_Wort_Kvass",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Ingredient_Wort_Pale_Ale",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Ingredient_Wort_Peasant_Beer",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Ingredient_Wort_Rough_Wine",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Ingredient_Wort_Sake",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Ingredient_Wort_Stout",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Ingredient_Wort_Wine",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Keg",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Keg_Fermenting",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Kvass",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Kvass_Buff",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Pale_Ale",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Pale_Ale_Buff",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Peasant_Beer",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Peasant_Beer_Buff",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Plant_Crop_Hops_Block",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Plant_Crop_Hops_Item",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Plant_Crop_Hops_Wall",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Roasted_Malt",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Rough_Wine",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Rough_Wine_Buff",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Sake",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Sake_Buff",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Stout",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Stout_Buff",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Tavern_Counter",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Tavern_Counter_Corner",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Tavern_Window_Blue",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Tavern_Window_Glass",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Tavern_Window_Green",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Tavern_Window_Red",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Template_Drink",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Tipsy",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Water_Bubble",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Water_Steam",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Wine",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Wine_Bubble",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Wine_Bubbles",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Wine_Buff",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Wine_Slot",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Wort",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Wort_Ale",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Wort_Apple_Cider",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Wort_Beer",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Wort_Chicha",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Wort_Kvass",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Wort_Pale_Ale",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Wort_Peasant_Beer",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Wort_Rough_Wine",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Wort_Sake",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Wort_Slot",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Wort_Stout",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Wort_Wine",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  },
+                  {
+                      "enabled":  true,
+                      "match":  "NoCube_Yeast_Slot",
+                      "mode":  "exact",
+                      "replaceWith":  "__DELETE__"
+                  }
+              ]
+}

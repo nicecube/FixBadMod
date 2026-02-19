@@ -1,7 +1,7 @@
 {
     "Group": "ca.nicecube",
     "Name": "FixBadMod",
-    "Version": "0.1.0",
+    "Version": "1.0.2",
     "Description": "Scans saved chunks and replaces bad mod blocks with safe replacements.",
     "Authors": [
         {

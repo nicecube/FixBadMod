@@ -34,10 +34,15 @@ public class FixBadModPlugin extends JavaPlugin {
         this.getCommandRegistry().registerCommand(new FixBadModCommand(this, this.sanitizerService));
 
         this.getLogger().atInfo().log(
-            "[%s] Enabled. Config: %s | rules=%d",
+            "[%s] Enabled. Config: %s | templates=%s | rules=%d (config=%d templates=%d enabledTemplates=%d/%d)",
             this.getName(),
             this.configService.getConfigPath().toAbsolutePath(),
-            this.config.getRules().size()
+            this.configService.getTemplatesDirectory().toAbsolutePath(),
+            this.configService.getLastEffectiveRuleCount(),
+            this.configService.getLastConfigRuleCount(),
+            this.configService.getLastTemplateRuleCount(),
+            this.configService.getLastEnabledTemplateCount(),
+            this.configService.getLastTemplateFileCount()
         );
         this.getLogger().atInfo().log(
             "[%s] Command: /fixbadmod scan --world=<world> | /fixbadmod execute --world=<world> | /fixbadmod status --world=<world> | /fixbadmod cancel --world=<world> | /fixbadmod reload",
@@ -65,5 +70,9 @@ public class FixBadModPlugin extends JavaPlugin {
 
     public Path getConfigPath() {
         return this.configService.getConfigPath();
+    }
+
+    public Path getTemplatesPath() {
+        return this.configService.getTemplatesDirectory();
     }
 }

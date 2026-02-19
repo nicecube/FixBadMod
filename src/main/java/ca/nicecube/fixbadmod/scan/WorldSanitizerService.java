@@ -31,6 +31,7 @@ import java.time.Instant;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +39,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,6 +53,7 @@ public class WorldSanitizerService {
 
     private static final Pattern CHUNK_FILE_PATTERN = Pattern.compile("^(-?\\d+)\\.(-?\\d+)\\.region\\.bin$");
     private static final Pattern UNKNOWN_KEY_PATTERN = Pattern.compile("Unknown key!\\s*([^\\s]+)");
+    private static final String LOG_SEPARATOR = "------------------------------------------------------------";
     private static final Set<String> DELETE_REPLACEMENTS = Set.of(
         "__DELETE__",
         "DELETE",
@@ -105,18 +108,13 @@ public class WorldSanitizerService {
         }
 
         List<Long> chunkIndexes;
-        try {
-            chunkIndexes = this.discoverChunkIndexes(world);
-        } catch (IOException e) {
-            this.logger.atWarning().withCause(e).log(
-                "[FixBadMod] Failed to enumerate chunk files for world '%s'",
-                worldName
-            );
-            return StartResult.notStarted("Failed to read chunk list for world '" + worldName + "'. Check logs.");
-        }
+        chunkIndexes = pending.getChunkIndexes();
 
         if (chunkIndexes.isEmpty()) {
-            return StartResult.notStarted("No chunk files found in world '" + worldName + "'");
+            return StartResult.notStarted(
+                "Pending dry-scan for world '" + worldName + "' has an empty chunk list. " +
+                    "Re-run /fixbadmod scan --world=" + worldName + " first."
+            );
         }
 
         ScanJob job = new ScanJob(
@@ -124,6 +122,8 @@ public class WorldSanitizerService {
             chunkIndexes,
             compiledRules,
             config.getScan().getMaxReplacementsPerChunk(),
+            config.getScan().getMatchBreakdownLimit(),
+            config.getScan().isAutoDeleteUnknownKeys(),
             JobMode.APPLY,
             currentSignature
         );
@@ -212,6 +212,8 @@ public class WorldSanitizerService {
             chunkIndexes,
             compiledRules,
             config.getScan().getMaxReplacementsPerChunk(),
+            config.getScan().getMatchBreakdownLimit(),
+            config.getScan().isAutoDeleteUnknownKeys(),
             mode,
             rulesSignature
         );
@@ -322,12 +324,20 @@ public class WorldSanitizerService {
         JobStatus snapshot = job.snapshot();
         if (snapshot.isCancelled()) {
             this.logger.atInfo().log(
-                "[FixBadMod] %s cancelled in world '%s' after %d/%d chunks, matches=%d",
-                snapshot.getMode(),
+                "[FixBadMod] %s%n" +
+                    "[FixBadMod] JOB CANCELLED%n" +
+                    "[FixBadMod] World   : %s%n" +
+                    "[FixBadMod] Mode    : %s%n" +
+                    "[FixBadMod] Progress: %d/%d%n" +
+                    "[FixBadMod] Matches : %d%n" +
+                    "[FixBadMod] %s",
+                LOG_SEPARATOR,
                 snapshot.getWorldName(),
+                snapshot.getMode(),
                 snapshot.getProcessedChunks(),
                 snapshot.getTotalChunks(),
-                snapshot.getTotalMatches()
+                snapshot.getTotalMatches(),
+                LOG_SEPARATOR
             );
             return;
         }
@@ -335,6 +345,7 @@ public class WorldSanitizerService {
         if (snapshot.getMode() == JobMode.SCAN) {
             PendingScan pending = new PendingScan(
                 snapshot.getWorldName(),
+                job.getChunkIndexes(),
                 snapshot.getTotalChunks(),
                 snapshot.getTouchedChunks(),
                 snapshot.getFailedChunks(),
@@ -344,20 +355,31 @@ public class WorldSanitizerService {
             );
             this.pendingScans.put(snapshot.getWorldName(), pending);
             this.logger.atInfo().log(
-                "[FixBadMod] Dry-scan completed in world '%s': chunks=%d touched=%d failed=%d matches=%d (%ss). " +
-                    "Awaiting confirmation: /fixbadmod execute --world=%s",
+                "[FixBadMod] %s%n" +
+                    "[FixBadMod] DRY-SCAN COMPLETED%n" +
+                    "[FixBadMod] World   : %s%n" +
+                    "[FixBadMod] Chunks  : %d/%d%n" +
+                    "[FixBadMod] Touched : %d%n" +
+                    "[FixBadMod] Failed  : %d%n" +
+                    "[FixBadMod] Matches : %d%n" +
+                    "[FixBadMod] Elapsed : %.2fs%n" +
+                    "[FixBadMod] Next    : /fixbadmod execute --world=%s%n" +
+                    "[FixBadMod] %s",
+                LOG_SEPARATOR,
                 snapshot.getWorldName(),
                 snapshot.getProcessedChunks(),
+                snapshot.getTotalChunks(),
                 snapshot.getTouchedChunks(),
                 snapshot.getFailedChunks(),
                 snapshot.getTotalMatches(),
-                String.format("%.2f", snapshot.getElapsedSeconds()),
-                snapshot.getWorldName()
+                snapshot.getElapsedSeconds(),
+                snapshot.getWorldName(),
+                LOG_SEPARATOR
             );
-            String matchSummary = this.buildMatchSummary(job.matchBreakdown, 20);
+            String matchSummary = this.buildMatchSummary(job.matchBreakdown, job.matchBreakdownLimit);
             if (!matchSummary.isBlank()) {
                 this.logger.atInfo().log(
-                    "[FixBadMod] SCAN match breakdown for world '%s': %s",
+                    "[FixBadMod] SCAN top matches for world '%s': %s",
                     snapshot.getWorldName(),
                     matchSummary
                 );
@@ -365,18 +387,29 @@ public class WorldSanitizerService {
         } else {
             this.pendingScans.remove(snapshot.getWorldName());
             this.logger.atInfo().log(
-                "[FixBadMod] APPLY completed in world '%s': chunks=%d touched=%d failed=%d replaced=%d (%ss)",
+                "[FixBadMod] %s%n" +
+                    "[FixBadMod] APPLY COMPLETED%n" +
+                    "[FixBadMod] World    : %s%n" +
+                    "[FixBadMod] Chunks   : %d/%d%n" +
+                    "[FixBadMod] Touched  : %d%n" +
+                    "[FixBadMod] Failed   : %d%n" +
+                    "[FixBadMod] Replaced : %d%n" +
+                    "[FixBadMod] Elapsed  : %.2fs%n" +
+                    "[FixBadMod] %s",
+                LOG_SEPARATOR,
                 snapshot.getWorldName(),
                 snapshot.getProcessedChunks(),
+                snapshot.getTotalChunks(),
                 snapshot.getTouchedChunks(),
                 snapshot.getFailedChunks(),
                 snapshot.getTotalMatches(),
-                String.format("%.2f", snapshot.getElapsedSeconds())
+                snapshot.getElapsedSeconds(),
+                LOG_SEPARATOR
             );
-            String matchSummary = this.buildMatchSummary(job.matchBreakdown, 20);
+            String matchSummary = this.buildMatchSummary(job.matchBreakdown, job.matchBreakdownLimit);
             if (!matchSummary.isBlank()) {
                 this.logger.atInfo().log(
-                    "[FixBadMod] APPLY match breakdown for world '%s': %s",
+                    "[FixBadMod] APPLY top replacements for world '%s': %s",
                     snapshot.getWorldName(),
                     matchSummary
                 );
@@ -584,7 +617,7 @@ public class WorldSanitizerService {
             String cacheKey = "state-error|" + unknownKey;
             CompiledRule replacementRule = replacementCache.computeIfAbsent(
                 cacheKey,
-                id -> this.resolveRuleOrAutoDeleteUnknown(unknownKey, job.rules)
+                id -> this.resolveRuleOrAutoDeleteUnknown(unknownKey, job, job.rules)
             );
 
             if (job.mode == JobMode.APPLY) {
@@ -866,7 +899,7 @@ public class WorldSanitizerService {
             String cacheKey = "holder-unknown|" + unknownKey;
             CompiledRule rule = replacementCache.computeIfAbsent(
                 cacheKey,
-                id -> this.resolveRuleOrAutoDeleteUnknown(unknownKey, rules)
+                id -> this.resolveRuleOrAutoDeleteUnknown(unknownKey, job, rules)
             );
             if (rule != null) {
                 this.recordMatch(job, "blockcomponent-holder-unknown:" + unknownKey);
@@ -912,7 +945,7 @@ public class WorldSanitizerService {
             String cacheKey = "entity-ref-unknown|" + unknownKey;
             CompiledRule rule = replacementCache.computeIfAbsent(
                 cacheKey,
-                id -> this.resolveRuleOrAutoDeleteUnknown(unknownKey, rules)
+                id -> this.resolveRuleOrAutoDeleteUnknown(unknownKey, job, rules)
             );
             if (rule != null) {
                 this.recordMatch(job, "entity-ref-unknown:" + unknownKey);
@@ -957,7 +990,7 @@ public class WorldSanitizerService {
             String cacheKey = "entity-holder-unknown|" + unknownKey;
             CompiledRule rule = replacementCache.computeIfAbsent(
                 cacheKey,
-                id -> this.resolveRuleOrAutoDeleteUnknown(unknownKey, rules)
+                id -> this.resolveRuleOrAutoDeleteUnknown(unknownKey, job, rules)
             );
             if (rule != null) {
                 this.recordMatch(job, "entity-holder-unknown:" + unknownKey);
@@ -998,7 +1031,7 @@ public class WorldSanitizerService {
             String cacheKey = "ref-unknown|" + unknownKey;
             CompiledRule rule = replacementCache.computeIfAbsent(
                 cacheKey,
-                id -> this.resolveRuleOrAutoDeleteUnknown(unknownKey, rules)
+                id -> this.resolveRuleOrAutoDeleteUnknown(unknownKey, job, rules)
             );
             if (rule != null) {
                 this.recordMatch(job, "blockcomponent-ref-unknown:" + unknownKey);
@@ -1007,10 +1040,14 @@ public class WorldSanitizerService {
         }
     }
 
-    private CompiledRule resolveRuleOrAutoDeleteUnknown(String unknownKey, List<CompiledRule> rules) {
+    private CompiledRule resolveRuleOrAutoDeleteUnknown(String unknownKey, ScanJob job, List<CompiledRule> rules) {
         CompiledRule configuredRule = this.resolveRule(unknownKey, rules);
         if (configuredRule != null) {
             return configuredRule;
+        }
+
+        if (!job.autoDeleteUnknownKeys) {
+            return null;
         }
 
         return this.autoDeleteRule(unknownKey);
@@ -1123,30 +1160,31 @@ public class WorldSanitizerService {
     }
 
     private List<Long> discoverChunkIndexes(World world) throws IOException {
+        Set<Long> mergedIndexes = new TreeSet<>();
+
         try {
             LongSet indexes = world.getChunkStore().getChunkIndexes();
-            if (indexes != null && !indexes.isEmpty()) {
-                List<Long> result = new ArrayList<>(indexes.size());
+            if (indexes != null) {
                 for (long index : indexes) {
-                    result.add(index);
+                    mergedIndexes.add(index);
                 }
-
-                result.sort(Comparator.naturalOrder());
-                return result;
             }
         } catch (Throwable error) {
             this.logger.atWarning().withCause(error).log(
-                "[FixBadMod] Could not fetch chunk indexes from ChunkStore for world '%s'. Falling back to file scan.",
+                "[FixBadMod] Could not fetch chunk indexes from ChunkStore for world '%s'. Continuing with file scan.",
                 world.getName()
             );
         }
 
         Path chunksPath = world.getSavePath().resolve("chunks");
         if (!Files.exists(chunksPath)) {
-            return List.of();
+            if (mergedIndexes.isEmpty()) {
+                return List.of();
+            }
+
+            return new ArrayList<>(mergedIndexes);
         }
 
-        List<Long> result = new ArrayList<>();
         try (Stream<Path> stream = Files.list(chunksPath)) {
             stream.filter(Files::isRegularFile)
                 .forEach(path -> {
@@ -1164,10 +1202,11 @@ public class WorldSanitizerService {
                         return;
                     }
 
-                    result.add(ChunkUtil.indexChunk(chunkX, chunkZ));
+                    mergedIndexes.add(ChunkUtil.indexChunk(chunkX, chunkZ));
                 });
         }
 
+        List<Long> result = new ArrayList<>(mergedIndexes);
         result.sort(Comparator.naturalOrder());
         return result;
     }
@@ -1307,6 +1346,7 @@ public class WorldSanitizerService {
 
     public static final class PendingScan {
         private final String worldName;
+        private final List<Long> chunkIndexes;
         private final int totalChunks;
         private final int touchedChunks;
         private final int failedChunks;
@@ -1316,6 +1356,7 @@ public class WorldSanitizerService {
 
         private PendingScan(
             String worldName,
+            List<Long> chunkIndexes,
             int totalChunks,
             int touchedChunks,
             int failedChunks,
@@ -1324,6 +1365,11 @@ public class WorldSanitizerService {
             Instant createdAt
         ) {
             this.worldName = worldName;
+            if (chunkIndexes == null || chunkIndexes.isEmpty()) {
+                this.chunkIndexes = List.of();
+            } else {
+                this.chunkIndexes = Collections.unmodifiableList(new ArrayList<>(chunkIndexes));
+            }
             this.totalChunks = totalChunks;
             this.touchedChunks = touchedChunks;
             this.failedChunks = failedChunks;
@@ -1334,6 +1380,10 @@ public class WorldSanitizerService {
 
         public String getWorldName() {
             return this.worldName;
+        }
+
+        public List<Long> getChunkIndexes() {
+            return this.chunkIndexes;
         }
 
         public int getTotalChunks() {
@@ -1460,9 +1510,12 @@ public class WorldSanitizerService {
     private static final class ScanJob {
         private final Object lock = new Object();
         private final World world;
+        private final List<Long> chunkIndexes;
         private final ArrayDeque<Long> queue;
         private final List<CompiledRule> rules;
         private final int maxReplacementsPerChunk;
+        private final int matchBreakdownLimit;
+        private final boolean autoDeleteUnknownKeys;
         private final JobMode mode;
         private final String rulesSignature;
         private final Instant startedAt;
@@ -1483,16 +1536,25 @@ public class WorldSanitizerService {
             List<Long> chunkIndexes,
             List<CompiledRule> rules,
             int maxReplacementsPerChunk,
+            int matchBreakdownLimit,
+            boolean autoDeleteUnknownKeys,
             JobMode mode,
             String rulesSignature
         ) {
             this.world = world;
+            this.chunkIndexes = List.copyOf(chunkIndexes);
             this.queue = new ArrayDeque<>(chunkIndexes);
             this.rules = rules;
             this.maxReplacementsPerChunk = maxReplacementsPerChunk;
+            this.matchBreakdownLimit = matchBreakdownLimit;
+            this.autoDeleteUnknownKeys = autoDeleteUnknownKeys;
             this.mode = mode;
             this.rulesSignature = rulesSignature;
             this.startedAt = Instant.now();
+        }
+
+        private List<Long> getChunkIndexes() {
+            return this.chunkIndexes;
         }
 
         private boolean isRunning() {

@@ -16,9 +16,25 @@ public class FixBadModConfig {
     }
 
     public static FixBadModConfig defaults() {
-        FixBadModConfig config = new FixBadModConfig();
-        config.rules.add(new Rule());
-        return config;
+        return new FixBadModConfig();
+    }
+
+    public void appendRules(List<Rule> extraRules) {
+        if (extraRules == null || extraRules.isEmpty()) {
+            return;
+        }
+
+        if (this.rules == null) {
+            this.rules = new ArrayList<>();
+        }
+
+        for (Rule rule : extraRules) {
+            if (rule == null) {
+                continue;
+            }
+
+            this.rules.add(rule.copy());
+        }
     }
 
     public void normalize() {
@@ -50,14 +66,28 @@ public class FixBadModConfig {
 
     public static class Scan {
         private int maxReplacementsPerChunk = -1;
+        private int matchBreakdownLimit = 20;
+        private boolean autoDeleteUnknownKeys = true;
 
         public int getMaxReplacementsPerChunk() {
             return this.maxReplacementsPerChunk;
         }
 
+        public int getMatchBreakdownLimit() {
+            return this.matchBreakdownLimit;
+        }
+
+        public boolean isAutoDeleteUnknownKeys() {
+            return this.autoDeleteUnknownKeys;
+        }
+
         public void normalize() {
             if (this.maxReplacementsPerChunk == 0 || this.maxReplacementsPerChunk < -1) {
                 this.maxReplacementsPerChunk = -1;
+            }
+
+            if (this.matchBreakdownLimit <= 0) {
+                this.matchBreakdownLimit = 20;
             }
         }
     }
@@ -82,6 +112,15 @@ public class FixBadModConfig {
 
         public String getReplaceWith() {
             return this.replaceWith;
+        }
+
+        public Rule copy() {
+            Rule copied = new Rule();
+            copied.enabled = this.enabled;
+            copied.match = this.match;
+            copied.mode = this.mode;
+            copied.replaceWith = this.replaceWith;
+            return copied;
         }
 
         public void normalize() {

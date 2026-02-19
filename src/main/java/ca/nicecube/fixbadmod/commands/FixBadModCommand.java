@@ -11,7 +11,19 @@ import com.hypixel.hytale.server.core.command.system.basecommands.CommandBase;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class FixBadModCommand extends AbstractCommandCollection {
+    private static final String PREFIX = "[FixBadMod]";
+    private static final String DIVIDER = "------------------------------------------------------------";
+    private static final String ANSI_RESET = "\u001B[0m";
+    private static final String ANSI_CYAN = "\u001B[96m";
+    private static final String ANSI_GREEN = "\u001B[92m";
+    private static final String ANSI_YELLOW = "\u001B[93m";
+    private static final String ANSI_RED = "\u001B[91m";
+    private static final String ANSI_GRAY = "\u001B[90m";
+
     private final FixBadModPlugin plugin;
     private final WorldSanitizerService sanitizerService;
 
@@ -28,8 +40,59 @@ public class FixBadModCommand extends AbstractCommandCollection {
         this.addSubCommand(new ReloadSubCommand());
     }
 
+    private enum Tone {
+        INFO,
+        SUCCESS,
+        WARN,
+        ERROR,
+        MUTED
+    }
+
     private static void send(CommandContext context, String message) {
-        context.sendMessage(Message.raw("[FixBadMod] " + message));
+        send(context, Tone.INFO, message);
+    }
+
+    private static void send(CommandContext context, Tone tone, String message) {
+        String fullMessage = PREFIX + " " + message;
+        if (context.isPlayer()) {
+            Message output = Message.raw(fullMessage);
+            applyPlayerColor(output, tone);
+            context.sendMessage(output);
+            return;
+        }
+
+        context.sendMessage(Message.raw(applyAnsiColor(fullMessage, tone)));
+    }
+
+    private static void sendSection(CommandContext context, String title, Tone titleTone, List<String> lines) {
+        send(context, Tone.MUTED, DIVIDER);
+        send(context, titleTone, title);
+        for (String line : lines) {
+            send(context, Tone.INFO, "  " + line);
+        }
+        send(context, Tone.MUTED, DIVIDER);
+    }
+
+    private static void applyPlayerColor(Message message, Tone tone) {
+        switch (tone) {
+            case SUCCESS -> message.color("#7CFC7C");
+            case WARN -> message.color("#FFD166");
+            case ERROR -> message.color("#FF7B7B");
+            case MUTED -> message.color("#9BA3AF");
+            case INFO -> message.color("#6FD3FF");
+        }
+    }
+
+    private static String applyAnsiColor(String text, Tone tone) {
+        String code = switch (tone) {
+            case SUCCESS -> ANSI_GREEN;
+            case WARN -> ANSI_YELLOW;
+            case ERROR -> ANSI_RED;
+            case MUTED -> ANSI_GRAY;
+            case INFO -> ANSI_CYAN;
+        };
+
+        return code + text + ANSI_RESET;
     }
 
     private final class ScanSubCommand extends AbstractWorldCommand {
@@ -43,14 +106,31 @@ public class FixBadModCommand extends AbstractCommandCollection {
                 world,
                 FixBadModCommand.this.plugin.getConfigSnapshot()
             );
-            send(context, result.getMessage());
+            String worldName = world.getName();
             if (result.isStarted()) {
-                send(
+                sendSection(
                     context,
-                    "When scan is done, run /fixbadmod status --world=" + world.getName() +
-                        " then /fixbadmod execute --world=" + world.getName()
+                    "SCAN STARTED",
+                    Tone.SUCCESS,
+                    List.of(
+                        "World: " + worldName,
+                        result.getMessage(),
+                        "Next: /fixbadmod status --world=" + worldName,
+                        "Then: /fixbadmod execute --world=" + worldName
+                    )
                 );
+                return;
             }
+
+            sendSection(
+                context,
+                "SCAN NOT STARTED",
+                Tone.WARN,
+                List.of(
+                    "World: " + worldName,
+                    result.getMessage()
+                )
+            );
         }
     }
 
@@ -65,7 +145,30 @@ public class FixBadModCommand extends AbstractCommandCollection {
                 world,
                 FixBadModCommand.this.plugin.getConfigSnapshot()
             );
-            send(context, result.getMessage());
+            String worldName = world.getName();
+            if (result.isStarted()) {
+                sendSection(
+                    context,
+                    "APPLY STARTED",
+                    Tone.SUCCESS,
+                    List.of(
+                        "World: " + worldName,
+                        result.getMessage(),
+                        "Use /fixbadmod status --world=" + worldName + " to monitor progress"
+                    )
+                );
+                return;
+            }
+
+            sendSection(
+                context,
+                "APPLY NOT STARTED",
+                Tone.WARN,
+                List.of(
+                    "World: " + worldName,
+                    result.getMessage()
+                )
+            );
         }
     }
 
@@ -76,12 +179,17 @@ public class FixBadModCommand extends AbstractCommandCollection {
 
         @Override
         protected void execute(CommandContext context, World world, Store<EntityStore> entityStore) {
-            send(context, "Deprecated: use /fixbadmod execute --world=" + world.getName());
+            send(context, Tone.WARN, "Deprecated: use /fixbadmod execute --world=" + world.getName());
             WorldSanitizerService.StartResult result = FixBadModCommand.this.sanitizerService.executePending(
                 world,
                 FixBadModCommand.this.plugin.getConfigSnapshot()
             );
-            send(context, result.getMessage());
+            if (result.isStarted()) {
+                send(context, Tone.SUCCESS, result.getMessage());
+                return;
+            }
+
+            send(context, Tone.WARN, result.getMessage());
         }
     }
 
@@ -97,7 +205,16 @@ public class FixBadModCommand extends AbstractCommandCollection {
             WorldSanitizerService.PendingScan pending = FixBadModCommand.this.sanitizerService.getPendingScan(worldName);
 
             if (status == null && pending == null) {
-                send(context, "No scan data for world '" + worldName + "'. Run /fixbadmod scan --world=" + worldName);
+                sendSection(
+                    context,
+                    "NO DATA",
+                    Tone.WARN,
+                    List.of(
+                        "World: " + worldName,
+                        "No scan data available yet.",
+                        "Run: /fixbadmod scan --world=" + worldName
+                    )
+                );
                 return;
             }
 
@@ -112,44 +229,58 @@ public class FixBadModCommand extends AbstractCommandCollection {
                 }
 
                 String metricLabel = status.getMode() == WorldSanitizerService.JobMode.SCAN ? "matches" : "replaced";
-                send(
-                    context,
+                Tone statusTone = switch (state) {
+                    case "running" -> Tone.INFO;
+                    case "cancelled" -> Tone.WARN;
+                    default -> Tone.SUCCESS;
+                };
+
+                List<String> lines = new ArrayList<>();
+                lines.add("World: " + status.getWorldName());
+                lines.add("Mode: " + status.getMode());
+                lines.add("State: " + state);
+                lines.add(
                     String.format(
-                        "world=%s mode=%s state=%s progress=%d/%d (%.2f%%) touched=%d failed=%d %s=%d elapsed=%.2fs",
-                        status.getWorldName(),
-                        status.getMode(),
-                        state,
+                        "Progress: %d/%d (%.2f%%)",
                         status.getProcessedChunks(),
                         status.getTotalChunks(),
-                        status.getProgressPercent(),
-                        status.getTouchedChunks(),
-                        status.getFailedChunks(),
-                        metricLabel,
-                        status.getTotalMatches(),
-                        status.getElapsedSeconds()
+                        status.getProgressPercent()
                     )
                 );
+                lines.add("Touched chunks: " + status.getTouchedChunks());
+                lines.add("Failed chunks: " + status.getFailedChunks());
+                lines.add(metricLabel + ": " + status.getTotalMatches());
+                lines.add(String.format("Elapsed: %.2fs", status.getElapsedSeconds()));
+
                 if (status.isCancelled() && !status.getCancelReason().isBlank()) {
-                    send(context, "cancelReason=" + status.getCancelReason());
+                    lines.add("Cancel reason: " + status.getCancelReason());
                 }
+
+                sendSection(context, "JOB STATUS", statusTone, lines);
             }
 
             if (pending != null) {
-                send(
+                sendSection(
                     context,
-                    String.format(
-                        "pendingConfirm=true world=%s chunks=%d touched=%d failed=%d matches=%d age=%.2fs",
-                        pending.getWorldName(),
-                        pending.getTotalChunks(),
-                        pending.getTouchedChunks(),
-                        pending.getFailedChunks(),
-                        pending.getTotalMatches(),
-                        pending.getAgeSeconds()
+                    "PENDING CONFIRMATION",
+                    Tone.WARN,
+                    List.of(
+                        "World: " + pending.getWorldName(),
+                        "Chunks: " + pending.getTotalChunks(),
+                        "Touched chunks: " + pending.getTouchedChunks(),
+                        "Failed chunks: " + pending.getFailedChunks(),
+                        "Matches: " + pending.getTotalMatches(),
+                        String.format("Age: %.2fs", pending.getAgeSeconds()),
+                        "Run now: /fixbadmod execute --world=" + worldName
                     )
                 );
-                send(context, "To apply now: /fixbadmod execute --world=" + worldName);
             } else {
-                send(context, "pendingConfirm=false");
+                sendSection(
+                    context,
+                    "PENDING CONFIRMATION",
+                    Tone.MUTED,
+                    List.of("none")
+                );
             }
         }
     }
@@ -163,11 +294,21 @@ public class FixBadModCommand extends AbstractCommandCollection {
         protected void execute(CommandContext context, World world, Store<EntityStore> entityStore) {
             boolean cancelled = FixBadModCommand.this.sanitizerService.cancel(world.getName(), "Cancelled by command");
             if (!cancelled) {
-                send(context, "No running job to cancel in world '" + world.getName() + "'");
+                sendSection(
+                    context,
+                    "CANCEL",
+                    Tone.WARN,
+                    List.of("No running job to cancel in world '" + world.getName() + "'")
+                );
                 return;
             }
 
-            send(context, "Cancel requested for world '" + world.getName() + "'");
+            sendSection(
+                context,
+                "CANCEL",
+                Tone.SUCCESS,
+                List.of("Cancel requested for world '" + world.getName() + "'")
+            );
         }
     }
 
@@ -179,9 +320,14 @@ public class FixBadModCommand extends AbstractCommandCollection {
         @Override
         protected void executeSync(CommandContext context) {
             FixBadModCommand.this.plugin.reloadConfig();
-            send(
+            sendSection(
                 context,
-                "Config reloaded from " + FixBadModCommand.this.plugin.getConfigPath().toAbsolutePath()
+                "RELOAD COMPLETE",
+                Tone.SUCCESS,
+                List.of(
+                    "Config: " + FixBadModCommand.this.plugin.getConfigPath().toAbsolutePath(),
+                    "Templates: " + FixBadModCommand.this.plugin.getTemplatesPath().toAbsolutePath()
+                )
             );
         }
     }
